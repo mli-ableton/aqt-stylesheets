@@ -420,7 +420,7 @@ StyleSetAttached::StyleSetAttached(QObject* pParent)
       }
     }
 
-    mPath = traversePathUp(p);
+    // mPath = traversePathUp(p);
 
     mStyleEngineLoadedConnection = QObject::connect(StyleEngineHost::globalStyleEngineHost(),
             &StyleEngineHost::styleEngineLoaded, [this] (aqt::stylesheets::StyleEngine* pStyleEngine)
@@ -477,7 +477,7 @@ void StyleSetAttached::setName(const QString& val)
 
     QObject* p = parent();
     if (p) {
-      mPath = traversePathUp(p);
+      // mPath = traversePathUp(p);
       setupStyle();
     }
 
@@ -507,7 +507,7 @@ void StyleSetAttached::onParentChanged(QQuickItem* pNewParent)
 {
   QObject* pParent = parent();
   if (pNewParent != nullptr && pParent != nullptr) {
-    mPath = traversePathUp(pParent);
+    // mPath = traversePathUp(pParent);
     setupStyle();
 
     Q_EMIT pathChanged(QString::fromStdString(pathToString(mPath)));
