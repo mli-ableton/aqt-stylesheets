@@ -258,85 +258,78 @@ bool StyleSet::getImpl(Property& prop, const QString& key) const
 
 QVariant StyleSet::get(const QString& key) const
 {
-  // Property prop;
-  // getImpl(prop, key);
+  Property prop;
+  getImpl(prop, key);
 
-  // if (prop.mValues.size() == 1) {
-  //   auto conv = convertProperty<QString>(prop.mValues[0]);
-  //   if (conv) {
-  //     return QVariant::fromValue(*conv);
-  //   }
-  // } else if (prop.mValues.size() > 1) {
-  //   QVariantList result;
-  //   for (const auto& propValue : prop.mValues) {
-  //     auto conv = convertProperty<QString>(propValue);
-  //     if (conv) {
-  //       result.push_back(conv.get());
-  //     }
-  //   }
+  if (prop.mValues.size() == 1) {
+    auto conv = convertProperty<QString>(prop.mValues[0]);
+    if (conv) {
+      return QVariant::fromValue(*conv);
+    }
+  } else if (prop.mValues.size() > 1) {
+    QVariantList result;
+    for (const auto& propValue : prop.mValues) {
+      auto conv = convertProperty<QString>(propValue);
+      if (conv) {
+        result.push_back(conv.get());
+      }
+    }
 
-  //   return result;
-  // }
+    return result;
+  }
 
   return QVariant();
 }
 
 QVariant StyleSet::values(const QString& key) const
 {
-  // Property prop;
-  // getImpl(prop, key);
+  Property prop;
+  getImpl(prop, key);
 
-  // if (prop.mValues.size() == 1) {
-  //   return convertValueToVariant(prop.mValues[0]);
-  // }
+  if (prop.mValues.size() == 1) {
+    return convertValueToVariant(prop.mValues[0]);
+  }
 
-  // return convertValueToVariantList(prop.mValues);
-  return QVariant();
+  return convertValueToVariantList(prop.mValues);
 }
 
-QColor StyleSet::color(const QString&) const
+QColor StyleSet::color(const QString& key) const
 {
-  return QColor(Qt::darkBlue);
-  // return lookupProperty<QColor>(key);
+  return lookupProperty<QColor>(key);
 }
 
-QFont StyleSet::font(const QString&) const
+QFont StyleSet::font(const QString& key) const
 {
-  return {};
-  // return lookupProperty<QFont>(key);
+  return lookupProperty<QFont>(key);
 }
 
-double StyleSet::number(const QString&) const
+double StyleSet::number(const QString& key) const
 {
-  return 2;
-  // return lookupProperty<double>(key);
+  return lookupProperty<double>(key);
 }
 
-bool StyleSet::boolean(const QString&) const
+bool StyleSet::boolean(const QString& key) const
 {
-  return true;
-  // return lookupProperty<bool>(key);
+  return lookupProperty<bool>(key);
 }
 
-QString StyleSet::string(const QString&) const
+QString StyleSet::string(const QString& key) const
 {
-  return "foo";
-  // return lookupProperty<QString>(key);
+  return lookupProperty<QString>(key);
 }
 
 QUrl StyleSet::url(const QString& key) const
 {
-  // Property prop;
-  // auto url = lookupProperty<QUrl>(prop, key);
+  Property prop;
+  auto url = lookupProperty<QUrl>(prop, key);
 
-  // if (mpEngine) {
-  //   auto baseUrl = prop.mSourceLoc.mSourceLayer == 0 ? mpEngine->defaultStyleSheetSource()
-  //                                                    : mpEngine->styleSheetSource();
-  //   return mpEngine->resolveResourceUrl(baseUrl, url);
-  // }
+  if (mpEngine) {
+    auto baseUrl = prop.mSourceLoc.mSourceLayer == 0 ? mpEngine->defaultStyleSheetSource()
+                                                     : mpEngine->styleSheetSource();
+    return mpEngine->resolveResourceUrl(baseUrl, url);
+  }
 
-  // return url;
-  return {};
+  return url;
 }
 
 void StyleSet::onStyleChanged(int changeCount)
