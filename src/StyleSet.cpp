@@ -185,13 +185,18 @@ StyleSet::StyleSet(QObject* pParent)
 {
 }
 
+StyleSet::~StyleSet()
+{
+  QObject::disconnect(mStyleChangedConnection);
+}
+
 void StyleSet::initStyleSet(const UiItemPath& path, StyleEngine* pEngine)
 {
   const bool isDiffEngine = mpEngine != pEngine;
 
   if (isDiffEngine || mPath != path) {
     if (mpEngine && isDiffEngine) {
-      disconnect(mpEngine, SIGNAL(styleChanged(int)), this, SLOT(onStyleChanged(int)));
+      QObject::disconnect(mStyleChangedConnection);
       mChangeCount = 0;
     }
 
@@ -199,7 +204,8 @@ void StyleSet::initStyleSet(const UiItemPath& path, StyleEngine* pEngine)
     mPath = path;
 
     if (mpEngine && isDiffEngine) {
-      connect(mpEngine, SIGNAL(styleChanged(int)), this, SLOT(onStyleChanged(int)));
+      mStyleChangedConnection = QObject::connect(mpEngine, &StyleEngine::styleChanged,
+        [this] (int changeCount) { onStyleChanged(changeCount); });
     }
 
     loadProperties(parent());
@@ -393,8 +399,8 @@ StyleSetAttached::StyleSetAttached(QObject* pParent)
   if (p) {
     QQuickItem* pItem = qobject_cast<QQuickItem*>(p);
     if (pItem != nullptr) {
-      connect(pItem, SIGNAL(parentChanged(QQuickItem*)), this,
-              SLOT(onParentChanged(QQuickItem*)));
+      mParentChangedConnection = QObject::connect(pItem, &QQuickItem::parentChanged,
+        [this] (QQuickItem* pNewParent) { onParentChanged(pNewParent); });
     } else if (p->parent() != nullptr) {
       styleSheetsLogInfo() << "Parent to StyleSetAttached is not a QQuickItem but '"
                            << p->metaObject()->className() << "'. "
@@ -409,12 +415,18 @@ StyleSetAttached::StyleSetAttached(QObject* pParent)
 
     mPath = traversePathUp(p);
 
-    connect(StyleEngineHost::globalStyleEngineHost(),
-            SIGNAL(styleEngineLoaded(aqt::stylesheets::StyleEngine*)), this,
-            SLOT(onStyleEngineChanged(aqt::stylesheets::StyleEngine*)));
+    mStyleEngineLoadedConnection = QObject::connect(StyleEngineHost::globalStyleEngineHost(),
+            &StyleEngineHost::styleEngineLoaded, [this] (aqt::stylesheets::StyleEngine* pStyleEngine)
+            { onStyleEngineChanged(pStyleEngine); });
 
     setupStyle();
   }
+}
+
+StyleSetAttached::~StyleSetAttached()
+{
+  QObject::disconnect(mParentChangedConnection);
+  QObject::disconnect(mStyleEngineLoadedConnection);
 }
 
 void StyleSetAttached::onStyleEngineChanged(StyleEngine* pEngine)

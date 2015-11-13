@@ -185,6 +185,7 @@ class StyleSet : public QObject
 public:
   /*! @cond DOXYGEN_IGNORE */
   StyleSet(QObject* pParent = nullptr);
+  ~StyleSet() override;
 
   void initStyleSet(const UiItemPath& path, StyleEngine* pEngine);
 
@@ -447,6 +448,7 @@ private:
   UiItemPath mPath;
   PropertyMap mProperties;
   int mChangeCount;
+  QMetaObject::Connection mStyleChangedConnection;
   /*! @endcond */
 };
 
@@ -463,6 +465,7 @@ class StyleSetAttached : public QObject
 
 public:
   explicit StyleSetAttached(QObject* pParent = nullptr);
+  ~StyleSetAttached() override;
 
   QString name() const;
   void setName(const QString& val);
@@ -492,6 +495,8 @@ private:
   StyleSet mStyle;
   QString mName;
   UiItemPath mPath;
+  QMetaObject::Connection mParentChangedConnection;
+  QMetaObject::Connection mStyleEngineLoadedConnection;
 };
 
 /*! @endcond */
