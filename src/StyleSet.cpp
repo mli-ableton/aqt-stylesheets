@@ -342,14 +342,14 @@ void StyleSet::onStyleChanged(int changeCount)
 void StyleSet::loadProperties(QObject* pRefObject)
 {
   if (mpEngine) {
-    mProperties = mpEngine->matchPath(mPath);
-    mChangeCount = mpEngine->changeCount();
+    // mProperties = mpEngine->matchPath(mPath);
+    // mChangeCount = mpEngine->changeCount();
 
-    if (pRefObject) {
-      PropertyMap inheritedProps(
-        effectivePropertyMap(pRefObject, mpEngine->changeCount()));
-      mergeInheritableProperties(mProperties, inheritedProps);
-    }
+    // if (pRefObject) {
+    //   PropertyMap inheritedProps(
+    //     effectivePropertyMap(pRefObject, mpEngine->changeCount()));
+    //   mergeInheritableProperties(mProperties, inheritedProps);
+    // }
 
     QObject* pParent = parent();
     if (qobject_cast<StyleSetAttached*>(pParent) != nullptr) {
