@@ -37,6 +37,8 @@ SUPPRESS_WARNINGS
 RESTORE_WARNINGS
 
 #include <memory>
+#include <set>
+#include <string>
 
 namespace aqt
 {
@@ -51,6 +53,9 @@ class StyleEngineHost : public QObject
 {
   Q_OBJECT
 public:
+  ~StyleEngineHost() override;
+  std::multiset<std::string> mPaths;
+
   using FontIdCache = std::map<QString, int>;
 
   static StyleEngineHost* globalStyleEngineHost();

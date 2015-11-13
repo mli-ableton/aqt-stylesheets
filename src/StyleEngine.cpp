@@ -330,6 +330,15 @@ StyleEngineHost* StyleEngineHost::globalStyleEngineHost()
   return &gGlobalStyleEngineHost;
 }
 
+
+StyleEngineHost::~StyleEngineHost()
+{
+  for (const auto& path : mPaths)
+  {
+    std::cout << path << std::endl;
+  }
+}
+
 StyleEngine* StyleEngineHost::globalStyleEngine()
 {
   return globalStyleEngineImpl();

@@ -414,6 +414,7 @@ StyleSetAttached::StyleSetAttached(QObject* pParent)
     }
 
     mPath = traversePathUp(p);
+    StyleEngineHost::globalStyleEngineHost()->mPaths.insert(pathToString(mPath));
 
     mStyleEngineLoadedConnection = QObject::connect(StyleEngineHost::globalStyleEngineHost(),
             &StyleEngineHost::styleEngineLoaded, [this] (aqt::stylesheets::StyleEngine* pStyleEngine)
