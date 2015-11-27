@@ -259,6 +259,9 @@ public:
   /*! Returns StyleSetProps corresponding to @p path */
   StyleSetProps* styleSetProps(const UiItemPath& path);
 
+  /*! Returns the PropertyMap corresponding to @p path */
+  PropertyMap* properties(const UiItemPath& path);
+
 Q_SIGNALS:
   /*! Fires when the style sheet is replaced or changed on the disk */
   void styleChanged();
@@ -323,6 +326,8 @@ private:
 
   void updateSourceUrls();
 
+  PropertyMap effectivePropertyMap(const UiItemPath& path);
+
 private:
   QUrl mStylePathUrl;        //!< @deprecated
   QString mStylePath;        //!< @deprecated
@@ -339,6 +344,7 @@ private:
   StylesDirWatcher mStylesDir;
 
   std::vector<std::unique_ptr<StyleSetProps>> mStyleSetPropsInstances;
+  std::vector<std::unique_ptr<PropertyMap>> mPropertyMapInstances;
 };
 
 } // namespace stylesheets
