@@ -337,6 +337,7 @@ private:
   StylesDirWatcher mStylesDir;
 
   std::vector<std::unique_ptr<StyleSetProps>> mStyleSetPropsInstances;
+  std::unordered_map<UiItemPath, StyleSetProps*, UiItemPathHasher> mStyleSetPropsByPath;
 
   std::vector<std::unique_ptr<PropertyMap>> mPropertyMapInstances;
   std::unordered_map<UiItemPath, PropertyMap*, UiItemPathHasher> mPropertyMaps;

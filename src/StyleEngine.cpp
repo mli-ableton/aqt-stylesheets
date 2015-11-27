@@ -352,8 +352,17 @@ QUrl StyleEngine::resolveResourceUrl(const QUrl& baseUrl, const QUrl& url) const
 
 StyleSetProps* StyleEngine::styleSetProps(const UiItemPath& path)
 {
+  const auto iElement = mStyleSetPropsByPath.find(path);
+  if (iElement != mStyleSetPropsByPath.end()) {
+    return iElement->second;
+  }
+
   mStyleSetPropsInstances.emplace_back(estd::make_unique<StyleSetProps>(path, this));
-  return mStyleSetPropsInstances.back().get();
+
+  auto* pStyleSetProps = mStyleSetPropsInstances.back().get();
+  mStyleSetPropsByPath.emplace(path, pStyleSetProps);
+
+  return pStyleSetProps;
 }
 
 PropertyMap* StyleEngine::properties(const UiItemPath& path)
