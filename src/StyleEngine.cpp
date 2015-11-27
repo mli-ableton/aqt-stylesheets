@@ -321,12 +321,21 @@ void StyleEngine::loadStyle()
 
   mpStyleTree = createMatchTree(styleSheet, defaultStyleSheet);
 
+  reloadAllProperties();
+
+  Q_EMIT styleChanged();
+}
+
+void StyleEngine::reloadAllProperties()
+{
   mPropertyMaps.clear();
 
   auto oldPropertyMapInstances = decltype(mPropertyMapInstances){};
   oldPropertyMapInstances.swap(mPropertyMapInstances);
 
-  Q_EMIT styleChanged();
+  for (auto& pStyleSetProps : mStyleSetPropsInstances) {
+    pStyleSetProps->loadProperties();
+  }
 
   oldPropertyMapInstances.clear();
 }
