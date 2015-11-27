@@ -45,9 +45,9 @@ namespace stylesheets
 {
 
 class StyleEngine;
-class StyleSetAttached;
+class StyleSet;
 
-/*! Provides style properties to QML via StyleSetAttached */
+/*! Provides style properties to QML via StyleSet */
 class StyleSetProps : public QObject
 {
   Q_OBJECT
@@ -353,7 +353,7 @@ private:
  * ```import Aqt.StyleSheets 1.0```
  * @since 1.0
  */
-class StyleSetAttached : public QObject
+class StyleSet : public QObject
 {
   Q_OBJECT
 
@@ -418,9 +418,9 @@ class StyleSetAttached : public QObject
   Q_PROPERTY(QString styleInfo READ styleInfo NOTIFY propsChanged)
 
 public:
-  explicit StyleSetAttached(QObject* pParent = nullptr);
+  explicit StyleSet(QObject* pParent = nullptr);
 
-  static StyleSetAttached* qmlAttachedProperties(QObject* pObject);
+  static StyleSet* qmlAttachedProperties(QObject* pObject);
 
   QString name() const;
   void setName(const QString& val);
@@ -471,7 +471,7 @@ private:
 } // namespace stylesheets
 } // namespace aqt
 
-QML_DECLARE_TYPEINFO(aqt::stylesheets::StyleSetAttached, QML_HAS_ATTACHED_PROPERTIES)
+QML_DECLARE_TYPEINFO(aqt::stylesheets::StyleSet, QML_HAS_ATTACHED_PROPERTIES)
 
 // include the header implementations
 #include "StyleSet.ipp"
