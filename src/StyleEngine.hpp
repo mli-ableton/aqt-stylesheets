@@ -37,6 +37,7 @@ SUPPRESS_WARNINGS
 RESTORE_WARNINGS
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 namespace aqt
@@ -318,7 +319,7 @@ private:
 
   void updateSourceUrls();
 
-  PropertyMap effectivePropertyMap(const UiItemPath& path);
+  PropertyMap* effectivePropertyMap(const UiItemPath& path);
 
 private:
   QUrl mStylePathUrl;        //!< @deprecated
@@ -336,7 +337,9 @@ private:
   StylesDirWatcher mStylesDir;
 
   std::vector<std::unique_ptr<StyleSetProps>> mStyleSetPropsInstances;
+
   std::vector<std::unique_ptr<PropertyMap>> mPropertyMapInstances;
+  std::unordered_map<UiItemPath, PropertyMap*, UiItemPathHasher> mPropertyMaps;
 };
 
 } // namespace stylesheets
