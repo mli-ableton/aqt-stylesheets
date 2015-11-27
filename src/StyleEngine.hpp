@@ -37,6 +37,7 @@ SUPPRESS_WARNINGS
 RESTORE_WARNINGS
 
 #include <memory>
+#include <vector>
 
 namespace aqt
 {
@@ -44,6 +45,7 @@ namespace stylesheets
 {
 
 class StyleEngine;
+class StyleSetProps;
 
 /*! @cond DOXYGEN_IGNORE */
 
@@ -199,6 +201,7 @@ class StyleEngine : public QObject, public QQmlParserStatus
 public:
   /*! @cond DOXYGEN_IGNORE */
   explicit StyleEngine(QObject* pParent = nullptr);
+  ~StyleEngine();
 
   QUrl styleSheetSource() const;
   void setStyleSheetSource(const QUrl& url);
@@ -252,6 +255,9 @@ public:
    * method takes QQmlEngine::importPathList() as searchPath for url resolution.
    */
   QUrl resolveResourceUrl(const QUrl& baseUrl, const QUrl& url) const;
+
+  /*! Returns StyleSetProps corresponding to @p path */
+  StyleSetProps* styleSetProps(const UiItemPath& path);
 
 Q_SIGNALS:
   /*! Fires when the style sheet is replaced or changed on the disk */
@@ -331,6 +337,8 @@ private:
   StyleEngineHost::FontIdCache& mFontIdCache;
 
   StylesDirWatcher mStylesDir;
+
+  std::vector<std::unique_ptr<StyleSetProps>> mStyleSetPropsInstances;
 };
 
 } // namespace stylesheets

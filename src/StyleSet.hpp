@@ -33,8 +33,6 @@ SUPPRESS_WARNINGS
 #include <QtQml/qqml.h>
 RESTORE_WARNINGS
 
-#include <memory>
-
 class QQuickItem;
 
 namespace aqt
@@ -205,6 +203,7 @@ Q_SIGNALS:
 private Q_SLOTS:
   void onStyleEngineChanged(StyleEngine* pEngine);
   void onParentChanged(QQuickItem* pNewParent);
+  void onPropsInvalidated();
 
 private:
   void setEngine(StyleEngine* pEngine);
@@ -212,7 +211,7 @@ private:
 
 private:
   QPointer<StyleEngine> mpEngine;
-  std::unique_ptr<StyleSetProps> mpStyleSetProps;
+  StyleSetProps* mpStyleSetProps;
   QString mName;
   UiItemPath mPath;
 
