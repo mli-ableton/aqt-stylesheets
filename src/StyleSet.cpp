@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include "Warnings.hpp"
 
 SUPPRESS_WARNINGS
+#include <QtGui/QWindow>
 #include <QtQuick/QQuickItem>
 RESTORE_WARNINGS
 
@@ -86,13 +87,16 @@ T traverseParentChain(QObject* pObj, ObjVisitor visitor)
   while (p) {
     if (visitor(p)) {
       QObject* nextp = p->parent();
-      if (!nextp) {
-        if (QQuickItem* pItem = qobject_cast<QQuickItem*>(p)) {
-          if (QQuickItem* pParentItem = pItem->parentItem()) {
-            nextp = pParentItem;
-          }
+
+      const auto nextpIsWindow = qobject_cast<QWindow*>(nextp) != nullptr;
+      QQuickItem* pItem = qobject_cast<QQuickItem*>(p);
+
+      if (!nextpIsWindow && pItem) {
+        if (QQuickItem* pParentItem = pItem->parentItem()) {
+          nextp = pParentItem;
         }
       }
+
       p = nextp;
     } else {
       p = nullptr;

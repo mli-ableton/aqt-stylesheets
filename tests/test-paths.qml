@@ -152,6 +152,7 @@ Item {
 
         ApplicationWindow {
             property alias a: a
+            property alias c: c
 
             Foo.A {
                 id: a
@@ -181,6 +182,19 @@ Item {
                 Instantiator {
                     id: instantiator
                     delegate: Foo.A {}
+                }
+            }
+
+            Foo.C {
+                id: c
+                property alias b: cb
+                Foo.A {
+                    id: ca
+                }
+
+                Foo.B {
+                    id: cb
+                    parent: ca
                 }
             }
         }
@@ -214,6 +228,13 @@ Item {
             AqtTests.Utils.withComponent(parentHierarchyCase, null, {}, function(w) {
                 compare(w.a.instantiator.object.StyleSet.path,
                         "ApplicationWindow/A/QQmlInstantiator/A");
+            });
+        }
+
+        function test_reparentedItem() {
+            AqtTests.Utils.withComponent(parentHierarchyCase, null, {}, function(w) {
+                compare(w.c.b.StyleSet.path,
+                        "ApplicationWindow/C/A/B");
             });
         }
     }
