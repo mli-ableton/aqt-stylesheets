@@ -144,4 +144,77 @@ Item {
             compare(spy.count, 0);
         }
     }
+
+    //--------------------------------------------------------------------------
+
+    Component {
+        id: parentHierarchyCase
+
+        ApplicationWindow {
+            property alias a: a
+
+            Foo.A {
+                id: a
+                property alias b: ab
+                property alias listView: listView
+                property alias loader: loader
+                property alias instantiator: instantiator
+
+                Foo.B {
+                    id: ab
+                    property alias c: abc
+
+                    Foo.C { id: abc }
+                }
+
+                ListView {
+                    id: listView
+                    model: 1
+                    delegate: Foo.B {}
+                }
+
+                Loader {
+                    id: loader
+                    sourceComponent: Foo.C {}
+                }
+
+                Instantiator {
+                    id: instantiator
+                    delegate: Foo.A {}
+                }
+            }
+        }
+    }
+
+    TestCase {
+        name: "build path by walking parentItem and parent hierarchy"
+
+        function test_simpleHierarchy() {
+            AqtTests.Utils.withComponent(parentHierarchyCase, null, {}, function(w) {
+                compare(w.a.b.c.StyleSet.path,
+                        "ApplicationWindow/A/B/C");
+            });
+        }
+
+        function test_hierarchyWithListView() {
+            AqtTests.Utils.withComponent(parentHierarchyCase, null, {}, function(w) {
+                compare(w.a.listView.currentItem.StyleSet.path,
+                        "ApplicationWindow/A/QQuickListView/QQuickItem/B");
+            });
+        }
+
+        function test_hierarchyWithLoader() {
+            AqtTests.Utils.withComponent(parentHierarchyCase, null, {}, function(w) {
+                compare(w.a.loader.item.StyleSet.path,
+                        "ApplicationWindow/A/QQuickLoader/C");
+            });
+        }
+
+        function test_hierarchyWithInstantiator() {
+            AqtTests.Utils.withComponent(parentHierarchyCase, null, {}, function(w) {
+                compare(w.a.instantiator.object.StyleSet.path,
+                        "ApplicationWindow/A/QQmlInstantiator/A");
+            });
+        }
+    }
 }
