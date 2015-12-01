@@ -103,7 +103,7 @@ StyleEngine::StyleEngine(QObject* pParent)
 StyleEngine::~StyleEngine()
 {
   for (auto& pStyleSetProps : mStyleSetPropsInstances) {
-    pStyleSetProps->invalidated();
+    Q_EMIT pStyleSetProps->invalidated();
   }
 }
 
