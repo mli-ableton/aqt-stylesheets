@@ -336,8 +336,6 @@ void StyleEngine::reloadAllProperties()
   for (auto& pStyleSetProps : mStyleSetPropsInstances) {
     pStyleSetProps->loadProperties();
   }
-
-  oldPropertyMapInstances.clear();
 }
 
 void StyleEngine::classBegin()
