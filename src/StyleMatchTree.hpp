@@ -67,6 +67,7 @@ public:
   std::vector<std::string> mClassNames;
 };
 
+void swap(PathElement& a, PathElement& b);
 std::size_t hash_value(const PathElement& pathElement);
 
 using UiItemPath = std::vector<PathElement>;

@@ -30,6 +30,7 @@ SUPPRESS_WARNINGS
 #include <QtQuick/QQuickItem>
 RESTORE_WARNINGS
 
+#include <algorithm>
 #include <string>
 
 namespace aqt
@@ -99,7 +100,7 @@ T traverseParentChain(QObject* pObj, ObjVisitor visitor)
     }
   }
 
-  return visitor.result();
+  return std::move(visitor).result();
 }
 
 class CollectPathVisitor
@@ -113,9 +114,14 @@ public:
     return true;
   }
 
-  UiItemPath result() const
+  UiItemPath result() &&
   {
-    return {mResult.rbegin(), mResult.rend()};
+    using std::begin;
+    using std::end;
+    using std::reverse;
+
+    reverse(begin(mResult), end(mResult));
+    return std::move(mResult);
   }
 };
 

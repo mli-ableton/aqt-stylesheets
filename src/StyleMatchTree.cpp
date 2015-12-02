@@ -43,6 +43,7 @@ RESTORE_WARNINGS
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace aqt
@@ -664,6 +665,13 @@ std::string pathToString(const UiItemPath& path)
   }
 
   return ss.str();
+}
+
+void swap(PathElement& a, PathElement& b)
+{
+  using std::swap;
+  swap(a.mTypeName, b.mTypeName);
+  swap(a.mClassNames, b.mClassNames);
 }
 
 std::size_t hash_value(const PathElement& pathElement)
