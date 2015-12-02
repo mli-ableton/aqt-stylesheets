@@ -60,8 +60,10 @@ QPointer<StyleEngine>& globalStyleEngineImpl()
 
 void setGlobalStyleEngine(StyleEngine* pEngine)
 {
+  std::cout << "setGlobalStyleEngine " << pEngine << std::endl;
   if (globalStyleEngineImpl() != pEngine) {
     globalStyleEngineImpl() = pEngine;
+    StyleSetProps::nullStyleSetProps()->invalidated();
     Q_EMIT StyleEngineHost::globalStyleEngineHost()->styleEngineLoaded(
       globalStyleEngineImpl());
   }
@@ -102,6 +104,10 @@ StyleEngine::StyleEngine(QObject* pParent)
 
 StyleEngine::~StyleEngine()
 {
+  if (this == StyleEngineHost::globalStyleEngine()) {
+    setGlobalStyleEngine(nullptr);
+  }
+
   for (auto& pStyleSetProps : mStyleSetPropsInstances) {
     Q_EMIT pStyleSetProps->invalidated();
   }
@@ -359,17 +365,22 @@ QUrl StyleEngine::resolveResourceUrl(const QUrl& baseUrl, const QUrl& url) const
 
 StyleSetProps* StyleEngine::styleSetProps(const UiItemPath& path)
 {
-  const auto iElement = mStyleSetPropsByPath.find(path);
-  if (iElement != mStyleSetPropsByPath.end()) {
-    return iElement->second;
+  if (auto* pEngine = StyleEngineHost::globalStyleEngine()) {
+    const auto iElement = pEngine->mStyleSetPropsByPath.find(path);
+    if (iElement != pEngine->mStyleSetPropsByPath.end()) {
+      return iElement->second;
+    }
+
+    pEngine->mStyleSetPropsInstances.emplace_back(
+      estd::make_unique<StyleSetProps>(path, pEngine));
+
+    auto* pStyleSetProps = pEngine->mStyleSetPropsInstances.back().get();
+    pEngine->mStyleSetPropsByPath.emplace(path, pStyleSetProps);
+
+    return pStyleSetProps;
+  } else {
+    return StyleSetProps::nullStyleSetProps();
   }
-
-  mStyleSetPropsInstances.emplace_back(estd::make_unique<StyleSetProps>(path, this));
-
-  auto* pStyleSetProps = mStyleSetPropsInstances.back().get();
-  mStyleSetPropsByPath.emplace(path, pStyleSetProps);
-
-  return pStyleSetProps;
 }
 
 PropertyMap* StyleEngine::properties(const UiItemPath& path)

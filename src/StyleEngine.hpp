@@ -250,7 +250,7 @@ public:
   QUrl resolveResourceUrl(const QUrl& baseUrl, const QUrl& url) const;
 
   /*! Returns StyleSetProps corresponding to @p path */
-  StyleSetProps* styleSetProps(const UiItemPath& path);
+  static StyleSetProps* styleSetProps(const UiItemPath& path);
 
   /*! Returns the PropertyMap corresponding to @p path */
   PropertyMap* properties(const UiItemPath& path);

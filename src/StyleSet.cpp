@@ -135,7 +135,6 @@ UiItemPath traversePathUp(QObject* pObj)
 
 StyleSet::StyleSet(QObject* pParent)
   : QObject(pParent)
-  , mpStyleSetProps(StyleSetProps::nullStyleSetProps())
 {
   auto* pEngine = StyleEngineHost::globalStyleEngine();
 
@@ -158,11 +157,6 @@ StyleSet::StyleSet(QObject* pParent)
 
     mPath = traversePathUp(p);
 
-    if (!pEngine) {
-      connect(StyleEngineHost::globalStyleEngineHost(),
-              &StyleEngineHost::styleEngineLoaded, this, &StyleSet::onStyleEngineLoaded);
-    }
-
     setupStyle();
   }
 }
@@ -172,29 +166,15 @@ StyleSet* StyleSet::qmlAttachedProperties(QObject* pObject)
   return new StyleSet(pObject);
 }
 
-void StyleSet::onStyleEngineLoaded(StyleEngine* pEngine)
-{
-  Q_ASSERT(pEngine);
-  Q_UNUSED(pEngine);
-
-  disconnect(StyleEngineHost::globalStyleEngineHost(),
-             &StyleEngineHost::styleEngineLoaded, this, &StyleSet::onStyleEngineLoaded);
-
-  setupStyle();
-  Q_ASSERT(mpStyleSetProps);
-}
-
 void StyleSet::setupStyle()
 {
-  if (auto* pEngine = StyleEngineHost::globalStyleEngine()) {
-    mpStyleSetProps = pEngine->styleSetProps(mPath);
+  mpStyleSetProps = StyleEngine::styleSetProps(mPath);
 
-    connect(mpStyleSetProps, &StyleSetProps::propsChanged, this, &StyleSet::propsChanged);
-    connect(
-      mpStyleSetProps, &StyleSetProps::invalidated, this, &StyleSet::onPropsInvalidated);
+  connect(mpStyleSetProps, &StyleSetProps::propsChanged, this, &StyleSet::propsChanged);
+  connect(
+    mpStyleSetProps, &StyleSetProps::invalidated, this, &StyleSet::onPropsInvalidated);
 
-    Q_EMIT propsChanged();
-  }
+  Q_EMIT propsChanged();
 }
 
 QString StyleSet::name() const
@@ -250,8 +230,7 @@ void StyleSet::onParentChanged(QQuickItem* pNewParent)
 void StyleSet::onPropsInvalidated()
 {
   mpStyleSetProps->disconnect(this);
-  mpStyleSetProps = StyleSetProps::nullStyleSetProps();
-  Q_EMIT propsChanged();
+  setupStyle();
 }
 
 } // namespace stylesheets

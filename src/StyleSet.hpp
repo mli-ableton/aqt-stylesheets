@@ -39,8 +39,6 @@ namespace aqt
 namespace stylesheets
 {
 
-class StyleEngine;
-
 /*! An attached type used for accessing CSS like style settings
  *
  * This type is exposed to QML as "StyleSet".
@@ -200,7 +198,6 @@ Q_SIGNALS:
   /*! @cond DOXYGEN_IGNORE */
 
 private Q_SLOTS:
-  void onStyleEngineLoaded(StyleEngine* pEngine);
   void onParentChanged(QQuickItem* pNewParent);
   void onPropsInvalidated();
 
